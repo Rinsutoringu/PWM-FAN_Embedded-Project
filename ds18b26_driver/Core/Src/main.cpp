@@ -31,6 +31,11 @@ LED blueLED(GPIOA, BLUE_LED_Pin);
 UART uart1(&huart1, 921600, 1000);
 Button button1(GPIOA, BUTTON_Pin);
 
+void callback(bool pressed)
+{
+	if (pressed) uart1.print("Button pressed!\r\n");
+}
+
 /**
   * @brief  主程序
   * @retval int
@@ -47,6 +52,9 @@ int main(void)
 	MX_USART1_UART_Init();
 
 	uart1.init();
+	button1.setCallback(callback);
+
+	uart1.print("init success!\r\n");
 
     while (1)
     {
@@ -57,6 +65,8 @@ int main(void)
 
     }
 }
+
+
 
 /**
   * @brief System Clock Configuration
