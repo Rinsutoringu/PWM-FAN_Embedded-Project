@@ -15,10 +15,13 @@
   *
   ******************************************************************************
   */
-#include "stm32f1xx_hal.h"
+// #include "stm32f1xx_hal.h"
 #include "main.h"
 #include "gpio.h"
 #include "led.h"
+#include "usart.h"
+
+
 
 void SystemClock_Config(void);
 
@@ -31,6 +34,7 @@ int main(void)
     HAL_Init();
     SystemClock_Config();
     MX_GPIO_Init();
+	MX_USART1_Init();
 
 	LED blueLED(GPIOA, BLUE_LED_Pin);
 

@@ -58,13 +58,18 @@ endif ()
 
 # 在这里添加项目头文件
 include_directories(
+        # 核心支持库
         Core/Inc
+        # 驱动程序
         Drivers/STM32F1xx_HAL_Driver/Inc
         Drivers/STM32F1xx_HAL_Driver/Inc/Legacy
         Drivers/CMSIS/Device/ST/STM32F1xx/Include
         Drivers/CMSIS/Include
+        # 我自己写的驱动
         Drivers/LED
         Drivers/DS18B20
+        # 工具类
+        Utils/UART
 )
 
 add_definitions(-DDEBUG -DUSE_HAL_DRIVER -DSTM32F103xB)
@@ -73,6 +78,7 @@ add_definitions(-DDEBUG -DUSE_HAL_DRIVER -DSTM32F103xB)
 file(GLOB_RECURSE SOURCES
         "Core/*.*"
         "Drivers/*.*"
+        "Utils/*.*"
 )
 # 排除 main.c
 list(REMOVE_ITEM SOURCES "${CMAKE_SOURCE_DIR}/Core/Src/main.c")
