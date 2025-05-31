@@ -4,8 +4,10 @@
 
 #include "button.h"
 
+extern UART uart1;
+
 Button::Button(GPIO_TypeDef* gpioPort, uint16_t gpioPin):
-	state(false), gpioPort(gpioPort), gpioPin(gpioPin), debounceDelay(10), pendingState(false), pendingTime(0) {}
+	state(false), gpioPort(gpioPort), gpioPin(gpioPin), debounceDelay(10), pendingState(false), pendingTime(0), buttonFlag(false) {}
 
 /**
  * 消抖函数，轮询时用
@@ -14,25 +16,26 @@ Button::Button(GPIO_TypeDef* gpioPort, uint16_t gpioPin):
  */
 void Button::read()
 {
-	// 判断按钮现在状态
 	bool reading = (HAL_GPIO_ReadPin(gpioPort, gpioPin) == GPIO_PIN_SET);
 	uint32_t now = HAL_GetTick();
 
-	// 如果按钮当前状态没变化，那就不管它
-	if (reading == pendingState) return;
-	// 如果发现按钮状态变了，就记录本次采样时间和状态
-	pendingTime = now;
-	pendingState = reading;
+	// 打印当前采样值和时间
+	uart1.printf("read=%d, pendingState=%d, state=%d, now=%lu, pendingTime=%lu\r\n",
+				 reading, pendingState, state, now, pendingTime);
 
-	// 如果当前时间和上次采样时间的差值小于消抖延迟，就不管它
-	if (!(now-pendingTime > debounceDelay)) return;
-	// 如果状态没有变化，就不管它
-	if (pendingState == VerifiedStatus) return;
-	// 如果状态变化了，就更新状态
-	VerifiedStatus = pendingState;
-	state = VerifiedStatus;
-	// 如果有回调函数，就调用它
-	if (callback) callback(state);
+	if (reading != pendingState) {
+		pendingState = reading;
+		pendingTime = now;
+		uart1.printf("State changed! pendingState=%d, pendingTime=%lu\r\n", pendingState, pendingTime);
+	}
+
+	if ((now - pendingTime) >= debounceDelay) {
+		if (state != pendingState) {
+			state = pendingState;
+			uart1.printf("Debounced! state=%d, time=%lu\r\n", state, now);
+			if (callback) callback(state);
+		}
+	}
 }
 
 void Button::setCallback(Callback cb)
@@ -43,7 +46,7 @@ void Button::setCallback(Callback cb)
 
 void Button::onInterrupt()
 {
-	read();
+	setButtonFlag(true); // 设置按钮中断标志
 }
 
 bool Button::getIsEnable()
@@ -64,4 +67,14 @@ void Button::disable()
 void Button::setDebounceDelay(uint32_t delay)
 {
 	debounceDelay = delay; // 设置消抖延迟
+}
+
+bool Button::getButtonFlag()
+{
+	return this->buttonFlag; // 获取按钮中断标志
+}
+
+void Button::setButtonFlag(bool flag)
+{
+	this->buttonFlag = flag;
 }

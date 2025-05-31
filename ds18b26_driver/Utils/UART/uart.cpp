@@ -36,3 +36,15 @@ bool UART::print(const char *pdata) const
 		return true;
 	return false;
 }
+
+bool UART::printf(const char *fmt, ...) const
+{
+	char buf[128]; // 根据需要调整缓冲区大小
+	va_list args;
+	va_start(args, fmt);
+	int len = vsnprintf(buf, sizeof(buf), fmt, args);
+	va_end(args);
+	if (len < 0) return false;
+	if (len > (int)sizeof(buf)) len = sizeof(buf); // 防止溢出
+	return print((const uint8_t *)buf);
+}

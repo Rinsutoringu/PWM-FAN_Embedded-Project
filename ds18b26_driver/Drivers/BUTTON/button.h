@@ -2,6 +2,7 @@
 // Created by RinChord on 25-5-31.
 //
 #include "stm32f1xx_hal.h"
+#include "uart.h"
 #pragma once
 
 
@@ -16,6 +17,8 @@ public:
 	void disable(); // 禁用按钮
 	void setDebounceDelay(uint32_t delay); // 设置消抖延迟
 	void setCallback(Callback cb); // 设置回调
+	bool getButtonFlag();
+	void setButtonFlag(bool flag);
 
 private:
 	// 按钮状态
@@ -36,6 +39,8 @@ private:
 	bool VerifiedStatus;
 	// 该按钮的回调函数
 	Callback callback;
+
+	volatile bool buttonFlag;
 
 
 };

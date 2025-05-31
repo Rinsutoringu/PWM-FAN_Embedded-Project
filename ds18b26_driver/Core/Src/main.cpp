@@ -58,11 +58,12 @@ int main(void)
 
     while (1)
     {
-    	blueLED.turnON();
-		HAL_Delay(1000);
-		blueLED.turnOFF();
-    	HAL_Delay(1000);
-
+		// 处理中断的按钮状态（消抖）
+    	if (button1.getButtonFlag())
+    	{
+			button1.setButtonFlag(false);
+    		button1.read();
+    	}
     }
 }
 

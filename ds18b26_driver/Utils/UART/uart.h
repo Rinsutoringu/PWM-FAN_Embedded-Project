@@ -5,6 +5,7 @@
 #include "stm32f1xx_hal.h"
 #include <stdio.h>
 #include <string.h>
+#include <cstdarg>
 
 #pragma once
 
@@ -48,5 +49,7 @@ public:
 	 * @param baudrate 波特率
 	 */
 	void setBaudrate(uint32_t baudrate);
+
+	bool printf(const char *fmt, ...) const;
 
 };
