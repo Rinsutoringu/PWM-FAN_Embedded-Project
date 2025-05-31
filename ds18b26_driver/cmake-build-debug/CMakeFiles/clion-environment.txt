@@ -1,0 +1,5 @@
+ToolSet: 12.0 w64 (local)@D:\environment\winlibs-x86_64-posix-seh-gcc-14.2.0-mingw-w64msvcrt-12.0.0-r3\mingw64
+Ninja: 1.12.0@D:\apps\JetBrains\CLion 2024.2.2\bin\ninja\win\x64\ninja.exe
+Options: 
+
+Options:-DCMAKE_MAKE_PROGRAM=D:/apps/JetBrains/CLion 2024.2.2/bin/ninja/win/x64/ninja.exe
