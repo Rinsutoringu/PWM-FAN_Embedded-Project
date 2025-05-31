@@ -20,6 +20,7 @@
 #include "gpio.h"
 #include "led.h"
 #include "usart.h"
+#include "uart.h"
 
 
 
@@ -31,16 +32,27 @@ void SystemClock_Config(void);
   */
 int main(void)
 {
+	// 初始化HAL库
     HAL_Init();
+	// 配置系统时钟
     SystemClock_Config();
-    MX_GPIO_Init();
-	MX_USART1_Init();
+	// 初始化所有外设
+	MX_GPIO_Init();
+	// 初始化USART1
+	MX_USART1_UART_Init();
 
+	// 初始化LED
 	LED blueLED(GPIOA, BLUE_LED_Pin);
+	// 初始化UART1
+	UART uart1(&huart1, 1000);
 
     while (1)
     {
-
+		uart1.print("HelloWorld!\r\n");
+    	HAL_Delay(1000);
+    	blueLED.turnON();
+    	HAL_Delay(1000);
+    	blueLED.turnOFF();
     }
 }
 
