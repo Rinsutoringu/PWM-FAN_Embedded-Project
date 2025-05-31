@@ -69,3 +69,12 @@ STM32 OOP 开发指南
     （似乎单实例会更好？）
 
   - 构造函数不要访问硬件，仅对类成员进行赋值。访问硬件留给一个专用的初始化方法 `init()`
+
+- 在CubeMX中生成中断配置后记得检查
+
+  ```c++
+  HAL_NVIC_SetPriority(EXTI9_5_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
+  ```
+
+  中断需要使能才能启用

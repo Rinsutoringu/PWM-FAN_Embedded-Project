@@ -52,6 +52,7 @@ int main(void)
 	// 初始化USART1
 	MX_USART1_UART_Init();
 
+
 	uart1.init();
 	button1.setCallback(callback);
 
@@ -63,8 +64,9 @@ int main(void)
 		// 处理中断的按钮状态（消抖）
     	if (button1.getButtonFlag())
     	{
-			button1.setButtonFlag(false);
+
     		button1.read();
+
     	}
     }
 }
