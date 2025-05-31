@@ -1,5 +1,0 @@
-"D:\apps\JetBrains\CLion 2024.2.2\bin\cmake\win\x64\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug "-DCMAKE_MAKE_PROGRAM=D:/apps/JetBrains/CLion 2024.2.2/bin/ninja/win/x64/ninja.exe" -G Ninja -S D:\dev\pwm_fan\ds18b26_driver -B D:\dev\pwm_fan\ds18b26_driver\cmake-build-debug
--- Minimal optimization, debug info included
--- Configuring done (0.1s)
--- Generating done (0.0s)
--- Build files have been written to: D:/dev/pwm_fan/ds18b26_driver/cmake-build-debug

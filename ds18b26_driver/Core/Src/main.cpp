@@ -36,10 +36,7 @@ int main(void)
 
     while (1)
     {
-        blueLED.turnON();
-    	HAL_Delay(1000);
-    	blueLED.turnOFF();
-    	HAL_Delay(1000);
+
     }
 }
 
