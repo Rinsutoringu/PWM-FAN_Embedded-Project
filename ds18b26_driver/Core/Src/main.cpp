@@ -48,11 +48,7 @@ int main(void)
 
     while (1)
     {
-		uart1.print("HelloWorld!\r\n");
-    	HAL_Delay(1000);
-    	blueLED.turnON();
-    	HAL_Delay(1000);
-    	blueLED.turnOFF();
+
     }
 }
 

@@ -68,8 +68,10 @@ include_directories(
         # 我自己写的驱动
         Drivers/LED
         Drivers/DS18B20
+        Drivers/BUTTON
         # 工具类
         Utils/UART
+
 )
 
 add_definitions(-DDEBUG -DUSE_HAL_DRIVER -DSTM32F103xB)
