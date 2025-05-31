@@ -26,3 +26,16 @@ bool LED::turnOFF() {
 bool LED::getState() const {
     return this->state;  // 返回当前LED状态
 }
+
+void LED::switchStatus()
+{
+	if (this->getState())
+	{
+		turnOFF();
+		return;
+	}
+	turnON();
+	return;
+
+}
+

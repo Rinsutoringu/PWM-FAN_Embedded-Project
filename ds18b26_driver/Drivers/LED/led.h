@@ -39,4 +39,6 @@ public:
      */
     bool getState() const;
 
+	void switchStatus();
+
 };

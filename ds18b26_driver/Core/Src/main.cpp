@@ -33,6 +33,7 @@ Button button1(GPIOA, BUTTON_Pin);
 
 void callback(bool pressed)
 {
+	blueLED.switchStatus();
 	if (pressed) uart1.print("Button pressed!\r\n");
 }
 
@@ -55,6 +56,7 @@ int main(void)
 	button1.setCallback(callback);
 
 	uart1.print("init success!\r\n");
+	blueLED.turnON();
 
     while (1)
     {
