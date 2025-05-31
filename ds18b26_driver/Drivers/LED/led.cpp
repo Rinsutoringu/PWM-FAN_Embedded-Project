@@ -1,23 +1,28 @@
 //
 // Created by RinChord on 25-5-30.
 //
-
 #include "led.h"
 
-LED::LED() : state(false) {
+
+LED::LED(GPIO_TypeDef* GPIOPort, uint16_t GPIO_Pin) : state(false), gpioPort(GPIOPort), gpioPin(GPIO_Pin) {
     // 初始化LED状态为关闭
 }
+
+// 点亮LED灯泡
 bool LED::turnON() {
-    this->state = true;  // 设置状态为开启
-    return true;  // 返回成功
+    this->state = true;
+	HAL_GPIO_WritePin(gpioPort, gpioPin, GPIO_PIN_SET);
+    return true;
 }
 
+// 关闭LED灯泡
 bool LED::turnOFF() {
-    this->state = false;  // 设置状态为关闭
-    return true;  // 返回成功
+	this->state = false;
+	HAL_GPIO_WritePin(gpioPort, gpioPin, GPIO_PIN_RESET);
+    return true;
 }
 
-
+// 获取LED开关状态
 bool LED::getState() const {
     return this->state;  // 返回当前LED状态
 }

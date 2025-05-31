@@ -71,9 +71,12 @@ add_definitions(-DDEBUG -DUSE_HAL_DRIVER -DSTM32F103xB)
 
 # 在这里添加项目源文件
 file(GLOB_RECURSE SOURCES
-        "Core/Src/*.cpp"
+        "Core/*.*"
         "Drivers/*.*"
 )
+# 排除 main.c
+list(REMOVE_ITEM SOURCES "${CMAKE_SOURCE_DIR}/Core/Src/main.c")
+
 
 set(LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/STM32F103C8TX_FLASH.ld)
 

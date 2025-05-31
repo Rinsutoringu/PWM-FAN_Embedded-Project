@@ -15,6 +15,7 @@
   *
   ******************************************************************************
   */
+#include "stm32f1xx_hal.h"
 #include "main.h"
 #include "gpio.h"
 #include "led.h"
@@ -31,9 +32,14 @@ int main(void)
     SystemClock_Config();
     MX_GPIO_Init();
 
+	LED blueLED(GPIOA, BLUE_LED_Pin);
+
     while (1)
     {
-        // 用户循环代码
+        blueLED.turnON();
+    	HAL_Delay(1000);
+    	blueLED.turnOFF();
+    	HAL_Delay(1000);
     }
 }
 
