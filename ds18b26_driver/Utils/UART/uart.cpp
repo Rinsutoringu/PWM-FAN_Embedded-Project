@@ -4,16 +4,23 @@
 
 #include "uart.h"
 
-UART::UART(UART_HandleTypeDef *huart, uint32_t Timeout)
+UART::UART(UART_HandleTypeDef *huart,uint32_t Baudrate, uint32_t Timeout)
 {
 	this->huart = huart;
 	this->Timeout = Timeout;
+	this->Baudrate = Baudrate;
 }
 
-UART::UART(UART_HandleTypeDef *huart)
+void UART::init()
 {
-	this->huart = huart;
-	this->Timeout = HAL_MAX_DELAY; // 默认超时时间为HAL_MAX_DELAY
+	setBaudrate(this->Baudrate);
+}
+
+void UART::setBaudrate(uint32_t baudrate)
+{
+	huart->Init.BaudRate = baudrate;
+	HAL_UART_DeInit(huart);
+	HAL_UART_Init(huart);
 }
 
 bool UART::print(const uint8_t *pdata) const

@@ -29,6 +29,7 @@ set(CMAKE_C_STANDARD 11)
 add_compile_options(-mcpu=cortex-m3 -mthumb -mthumb-interwork)
 add_compile_options(-ffunction-sections -fdata-sections -fno-common -fmessage-length=0)
 
+
 # uncomment to mitigate c++17 absolute addresses warnings
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-register")
 
@@ -56,6 +57,10 @@ else ()
     add_compile_options(-Og -g)
 endif ()
 
+# 禁用异常和RTTI
+add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-fno-exceptions>)
+add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-fno-rtti>)
+
 # 在这里添加项目头文件
 include_directories(
         # 核心支持库
@@ -76,15 +81,38 @@ include_directories(
 
 add_definitions(-DDEBUG -DUSE_HAL_DRIVER -DSTM32F103xB)
 
-# 在这里添加项目源文件
-file(GLOB_RECURSE SOURCES
-        "Core/*.*"
-        "Drivers/*.*"
-        "Utils/*.*"
+# 用到的HAL标准库文件
+set(HAL_SOURCES
+        Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal.c
+        Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_cortex.c
+        Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio.c
+        Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc.c
+        Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c
+        Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_flash.c
+        Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_flash_ex.c
+        Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_uart.c
+        Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_exti.c
 )
-# 排除 main.c
-list(REMOVE_ITEM SOURCES "${CMAKE_SOURCE_DIR}/Core/Src/main.c")
 
+# 添加项目源文件
+file(GLOB_RECURSE USER_SOURCES
+        Core/*.c
+        Core/*.cpp
+        Drivers/LED/*.cpp
+        Drivers/BUTTON/*.cpp
+        Drivers/DS18B20/*.cpp
+        Utils/UART/*.cpp
+)
+
+# 排除 main.c
+list(REMOVE_ITEM USER_SOURCES "${CMAKE_SOURCE_DIR}/Core/Src/main.c")
+
+# 将以上文件添加到 SOURCES 变量中，并设置汇编输出路径
+set(SOURCES
+        ${USER_SOURCES}
+        ${HAL_SOURCES}
+        Core/Startup/startup_stm32f103c8tx.s
+)
 
 set(LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/STM32F103C8TX_FLASH.ld)
 

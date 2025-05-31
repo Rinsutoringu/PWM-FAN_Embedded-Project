@@ -21,10 +21,15 @@
 #include "led.h"
 #include "usart.h"
 #include "uart.h"
+#include "button.h"
 
 
 
 void SystemClock_Config(void);
+
+LED blueLED(GPIOA, BLUE_LED_Pin);
+UART uart1(&huart1, 921600, 1000);
+Button button1(GPIOA, BUTTON_Pin);
 
 /**
   * @brief  主程序
@@ -41,13 +46,14 @@ int main(void)
 	// 初始化USART1
 	MX_USART1_UART_Init();
 
-	// 初始化LED
-	LED blueLED(GPIOA, BLUE_LED_Pin);
-	// 初始化UART1
-	UART uart1(&huart1, 1000);
+	uart1.init();
 
     while (1)
     {
+    	blueLED.turnON();
+		HAL_Delay(1000);
+		blueLED.turnOFF();
+    	HAL_Delay(1000);
 
     }
 }

@@ -14,6 +14,7 @@ private:
 	// UART所用端口
 	UART_HandleTypeDef *huart;
 	uint32_t Timeout;
+	uint32_t Baudrate;
 
 public:
 	/**
@@ -21,13 +22,12 @@ public:
 	 * @param huart 输出端口
 	 * @param printdata 输出数据
 	 */
-	UART(UART_HandleTypeDef *huart, uint32_t Timeout);
+	UART(UART_HandleTypeDef *huart,uint32_t Baudrate, uint32_t Timeout);
 
 	/**
-	 * 实例化UART类 Timeout默认值为HAL_MAX_DELAY
-	 * @param huart 输出端口
+	 * 设备初始化函数
 	 */
-	UART(UART_HandleTypeDef *huart);
+	void init();
 
 	/**
 	 * 发送数据
@@ -42,5 +42,11 @@ public:
 	 * @return 成功发送返回true
 	 */
 	bool print(const char *pdata) const;
+
+	/**
+	 * 设置波特率
+	 * @param baudrate 波特率
+	 */
+	void setBaudrate(uint32_t baudrate);
 
 };
