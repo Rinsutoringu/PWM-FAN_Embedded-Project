@@ -4,6 +4,7 @@
 
 #include "ds18b20.h"
 
+
 DS18B20::DS18B20(GPIO_TypeDef* gpioPort, uint16_t gpioPin)
 	: gpioPort(gpioPort), gpioPin(gpioPin), isEnable(false), temperature(-1), gpioMode(0x00) {
 }
@@ -61,6 +62,40 @@ void DS18B20::output_low()
 	HAL_GPIO_WritePin(gpioPort, gpioPin, GPIO_PIN_RESET);
 }
 
+// 微秒级延迟函数
+void DS18B20::delay_us(uint16_t us)
+{
+	uint16_t start = __HAL_TIM_GET_COUNTER(&htim1);
+	while (__HAL_TIM_GET_COUNTER(&htim1) - start < us);
+}
+
+// 读取一个位
+bool DS18B20::read_bit()
+{
+	output_low();
+	delay_us(25);
+	setGPIOInput();
+	GPIO_PinState state = HAL_GPIO_ReadPin(gpioPort, gpioPin);
+	delay_us(45);
+	return (state == GPIO_PIN_SET);
+}
+
+// 读取一个字节
+uint8_t DS18B20::read_byte()
+{
+	uint8_t byte = 0;
+	for (uint8_t i = 0; i < 8; i++)
+	{
+		if (read_bit())
+		{
+			// 给byte的第i位赋值1
+			byte |= (1<<i);
+		}
+
+	}
+	return byte;
+}
+
 // 写入一个位
 void DS18B20::write_bit(bool bit)
 {
@@ -82,40 +117,6 @@ void DS18B20::write_bit(bool bit)
 	}
 }
 
-// 微秒级延迟函数
-void DS18B20::delay_us(uint16_t us)
-{
-	uint16_t start = __HAL_TIM_GET_COUNTER(&htim1);
-	while (__HAL_TIM_GET_COUNTER(&htim1) - start < us);
-}
-
-// 读取一个位
-bool DS18B20::read_bit()
-{
-	setGPIOInput();
-	GPIO_PinState state = HAL_GPIO_ReadPin(gpioPort, gpioPin);
-	return (state == GPIO_PIN_SET);
-}
-
-// 读取一个字节
-uint8_t DS18B20::read_byte()
-{
-	uint8_t byte = 0;
-	for (uint8_t i = 0; i < 8; i++)
-	{
-		output_low();
-		delay_us(25);
-		if (read_bit())
-		{
-			// 给byte的第i位赋值1
-			byte |= (i<<i);
-		}
-		delay_us(45);
-	}
-	return byte;
-}
-
-
 /**
  * 写入一个byte
  * @param byte 指令
@@ -130,33 +131,50 @@ void DS18B20::write_byte(uint8_t byte)
 }
 
 // ds18b20设备初始化
-bool DS18B20::init()
+void DS18B20::init()
+{
+	HAL_TIM_Base_Start(&htim1);
+	reset();
+}
+
+bool DS18B20::reset()
 {
 	output_low();
 	delay_us(600); // 等待500us
-	output_high(); // 释放总线
 	setGPIOInput();
-
-	// 总线被拉低，设备初始化成功
-	if (read_bit() == false)
+	delay_us(70);
+	bool presence = !HAL_GPIO_ReadPin(gpioPort, gpioPin);
+	delay_us(410);
+	// 总线被拉低，设备重置成功
+	if (presence == true)
 	{
 		this->isEnable = true; // 设置设备可用
 		return true;
 	}
-	// 初始化失败
+	// 重置失败
 	this->isEnable = false;
+	uart1.print("Fail: Device found\r\n");
 	return false;
 }
 
-void DS18B20::start()
-{
-	if (!is_Enable()) return; // 如果设备不可用，直接返回
 
+
+int16_t DS18B20::readTemperature()
+{
+	// 尝试初始化设备
+	reset();
 	write_byte(DEVICE_JUMP_ROM);
-	write_byte(DEVICE_TEMP_CONVERSION); // 发送温度转换命令
-}
+	write_byte(DEVICE_TEMP_CONVERSION);
 
-int32_t DS18B20::readTemperature()
-{
+	HAL_Delay(750);
+
+	reset();
+	write_byte(DEVICE_JUMP_ROM);
+	write_byte(DEVICE_READ_RAM);
+
+	uint8_t lowByte = read_byte();
+	uint8_t highByte = read_byte();
+	int16_t raw = (int16_t)((highByte << 8) | lowByte);
+	return raw / 16;
 
 }

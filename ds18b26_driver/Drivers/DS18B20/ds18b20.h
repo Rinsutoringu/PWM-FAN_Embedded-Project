@@ -13,7 +13,7 @@
 #define DEVICE_JUMP_ROM 0xCC
 #define DEVICE_READ_ROM 0x33
 #define DEVICE_TEMP_CONVERSION 0x44
-#define DEVICE_READ_TEMP 0xBE
+#define DEVICE_READ_RAM 0xBE
 
 extern UART uart1;
 
@@ -38,11 +38,11 @@ private:
 public:
 	DS18B20(GPIO_TypeDef* gpioPort, uint16_t gpioPin);
 	// 初始化设备
-	bool init();
-	// 准备获取温度
-	void start();
+	void init();
+	// 重置设备
+	bool reset();
 	// 读取温度
-	int32_t readTemperature();
+	int16_t readTemperature();
 
 	bool is_Enable();
 

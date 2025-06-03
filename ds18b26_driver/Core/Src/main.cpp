@@ -23,6 +23,7 @@
 #include "usart.h"
 #include "uart.h"
 #include "button.h"
+#include "ds18b20.h"
 
 
 
@@ -32,6 +33,7 @@ static void MX_NVIC_Init(void);
 LED blueLED(GPIOA, BLUE_LED_Pin);
 UART uart1(&huart1, 921600, 1000);
 Button button1(GPIOA, BUTTON_Pin);
+DS18B20 ds18b20(GPIOA, DS18B20_Pin);
 
 void callback(bool pressed)
 {
@@ -56,22 +58,17 @@ int main(void)
 	MX_TIM1_Init();
 	MX_NVIC_Init();
 
-
 	uart1.init();
 	button1.setCallback(callback);
+	ds18b20.init();
 
 	uart1.print("init success!\r\n");
 	blueLED.turnON();
 
     while (1)
     {
-		// 处理中断的按钮状态（消抖）
-    	if (button1.getButtonFlag())
-    	{
-
-    		button1.read();
-
-    	}
+		HAL_Delay(1000);
+    	uart1.printf("Get Temperature: %d\r\n", ds18b20.readTemperature());
     }
 }
 
