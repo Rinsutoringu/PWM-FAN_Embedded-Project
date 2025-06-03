@@ -33,10 +33,11 @@ private:
 	bool isEnable;
 	int32_t temperature;
 	uint16_t gpioMode;
+	TIM_HandleTypeDef* timer;
 
 
 public:
-	DS18B20(GPIO_TypeDef* gpioPort, uint16_t gpioPin);
+	DS18B20(GPIO_TypeDef* gpioPort, uint16_t gpioPin, TIM_HandleTypeDef* timer);
 	// 初始化设备
 	void init();
 	// 重置设备
@@ -56,7 +57,7 @@ public:
 	bool read_bit();
 	uint8_t read_byte();
 
-	static void delay_us(uint16_t us);
+	void delay_us(uint16_t us);
 
 
 

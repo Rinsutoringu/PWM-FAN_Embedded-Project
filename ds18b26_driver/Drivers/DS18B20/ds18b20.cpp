@@ -5,8 +5,8 @@
 #include "ds18b20.h"
 
 
-DS18B20::DS18B20(GPIO_TypeDef* gpioPort, uint16_t gpioPin)
-	: gpioPort(gpioPort), gpioPin(gpioPin), isEnable(false), temperature(-1), gpioMode(0x00) {
+DS18B20::DS18B20(GPIO_TypeDef* gpioPort, uint16_t gpioPin, TIM_HandleTypeDef* timer)
+	: gpioPort(gpioPort), gpioPin(gpioPin), isEnable(false), temperature(-1), gpioMode(0x00), timer(timer) {
 }
 
 bool DS18B20::is_Enable()
@@ -65,8 +65,8 @@ void DS18B20::output_low()
 // 微秒级延迟函数
 void DS18B20::delay_us(uint16_t us)
 {
-	uint16_t start = __HAL_TIM_GET_COUNTER(&htim1);
-	while (__HAL_TIM_GET_COUNTER(&htim1) - start < us);
+	uint16_t start = __HAL_TIM_GET_COUNTER(timer);
+	while (__HAL_TIM_GET_COUNTER(timer) - start < us);
 }
 
 // 读取一个位
@@ -162,13 +162,13 @@ bool DS18B20::reset()
 int16_t DS18B20::readTemperature()
 {
 	// 尝试初始化设备
-	reset();
+	if (!reset()) return -1;
 	write_byte(DEVICE_JUMP_ROM);
 	write_byte(DEVICE_TEMP_CONVERSION);
 
 	HAL_Delay(750);
 
-	reset();
+	if (!reset()) return -1;
 	write_byte(DEVICE_JUMP_ROM);
 	write_byte(DEVICE_READ_RAM);
 

@@ -33,12 +33,13 @@ static void MX_NVIC_Init(void);
 LED blueLED(GPIOA, BLUE_LED_Pin);
 UART uart1(&huart1, 921600, 1000);
 Button button1(GPIOA, BUTTON_Pin);
-DS18B20 ds18b20(GPIOA, DS18B20_Pin);
+DS18B20 ds18b20(GPIOA, DS18B20_Pin, &htim1);
+
+bool tempFlag = false;
 
 void callback(bool pressed)
 {
-	blueLED.switchStatus();
-	if (pressed) uart1.print("Button pressed!\r\n");
+	if (pressed) tempFlag = true;
 }
 
 /**
@@ -67,8 +68,16 @@ int main(void)
 
     while (1)
     {
-		HAL_Delay(1000);
-    	uart1.printf("Get Temperature: %d\r\n", ds18b20.readTemperature());
+    	if (button1.getButtonFlag()) {
+			button1.read(); // 轮询按钮状态
+		}
+		if (tempFlag)
+		{
+			uart1.printf("Get Temperature: %d\r\n", ds18b20.readTemperature());
+			tempFlag = false; // 重置标志位
+		}
+
+
     }
 }
 
