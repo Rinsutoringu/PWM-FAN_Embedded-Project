@@ -17,6 +17,7 @@
   */
 // #include "stm32f1xx_hal.h"
 #include "main.h"
+#include "tim.h"
 #include "gpio.h"
 #include "led.h"
 #include "usart.h"
@@ -26,6 +27,7 @@
 
 
 void SystemClock_Config(void);
+static void MX_NVIC_Init(void);
 
 LED blueLED(GPIOA, BLUE_LED_Pin);
 UART uart1(&huart1, 921600, 1000);
@@ -51,6 +53,8 @@ int main(void)
 	MX_GPIO_Init();
 	// 初始化USART1
 	MX_USART1_UART_Init();
+	MX_TIM1_Init();
+	MX_NVIC_Init();
 
 
 	uart1.init();
@@ -107,6 +111,16 @@ void SystemClock_Config(void)
     {
         Error_Handler();
     }
+}
+
+/**
+ * 初始化NVIC中断
+ */
+static void MX_NVIC_Init(void)
+{
+	/* EXTI9_5_IRQn interrupt configuration */
+	HAL_NVIC_SetPriority(EXTI9_5_IRQn, 0, 0);
+	HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
 }
 
 /** 这个函数在发生错误时执行

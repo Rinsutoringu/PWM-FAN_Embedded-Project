@@ -5,6 +5,8 @@
 #pragma once
 
 #include "stm32f1xx_hal.h"
+#include "tim.h"
+#include "time.h"
 
 #define GPIO_OUTPUT 0x01
 #define GPIO_INPUT 0x02
@@ -30,7 +32,7 @@ private:
 public:
 	DS18B20(GPIO_TypeDef* gpioPort, uint16_t gpioPin);
 	// 初始化设备
-	void init();
+	bool init();
 	// 发送指令
 	void sendCommand(uint8_t command);
 	// 读取温度
@@ -39,12 +41,16 @@ public:
 	void enable();
 	void disable();
 
-	void setGPIOInput();
 	void setGPIOOutput();
+	void output_low();
+	void output_high();
+	void write_bit(bool bit);
+	void write_bit(uint8_t byte);
 
-	void gpio_output_low();
-	void gpio_output_high();
+	void setGPIOInput();
+	bool get_status();
 
+	static void delay_us(uint16_t us);
 
 
 };
