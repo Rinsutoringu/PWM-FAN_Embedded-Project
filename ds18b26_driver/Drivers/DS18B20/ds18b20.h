@@ -6,10 +6,16 @@
 
 #include "stm32f1xx_hal.h"
 #include "tim.h"
-#include "time.h"
+#include "uart.h"
 
 #define GPIO_OUTPUT 0x01
 #define GPIO_INPUT 0x02
+#define DEVICE_JUMP_ROM 0xCC
+#define DEVICE_READ_ROM 0x33
+#define DEVICE_TEMP_CONVERSION 0x44
+#define DEVICE_READ_TEMP 0xBE
+
+extern UART uart1;
 
 /**
  * 在使用本驱动前需要做的事情：
@@ -33,24 +39,25 @@ public:
 	DS18B20(GPIO_TypeDef* gpioPort, uint16_t gpioPin);
 	// 初始化设备
 	bool init();
-	// 发送指令
-	void sendCommand(uint8_t command);
+	// 准备获取温度
+	void start();
 	// 读取温度
 	int32_t readTemperature();
 
-	void enable();
-	void disable();
+	bool is_Enable();
 
 	void setGPIOOutput();
 	void output_low();
 	void output_high();
 	void write_bit(bool bit);
-	void write_bit(uint8_t byte);
+	void write_byte(uint8_t byte);
 
 	void setGPIOInput();
-	bool get_status();
+	bool read_bit();
+	uint8_t read_byte();
 
 	static void delay_us(uint16_t us);
+
 
 
 };
