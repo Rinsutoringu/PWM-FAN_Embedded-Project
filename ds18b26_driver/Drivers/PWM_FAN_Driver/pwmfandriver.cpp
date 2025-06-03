@@ -4,8 +4,8 @@
 
 #include "pwmfandriver.h"
 
-PWM_FAN_DRIVER(GPIO_TypeDef* gpioPort, uint16_t gpioPin)
-	: gpioPort(gpioPort), gpioPin(gpioPin), temp(0) {
+PWM_FAN_DRIVER::PWM_FAN_DRIVER(GPIO_TypeDef* gpioPort, uint16_t gpioPin)
+	: gpioPort(gpioPort), gpioPin(gpioPin), temp(0), htim3(), sConfigOC(){
 }
 
 
@@ -17,10 +17,6 @@ void PWM_FAN_DRIVER::init()
 	GPIO_InitStructure.Mode = GPIO_MODE_AF_PP;
 	GPIO_InitStructure.Speed = GPIO_SPEED_HIGH;
 	HAL_GPIO_Init(gpioPort, &GPIO_InitStructure);
-
-	// 配置pwm发生源
-	TIM_HandleTypeDef htim3;
-	TIM_OC_InitTypeDef sConfigOC;
 
 	// 启用TIM3时钟
 	__HAL_RCC_TIM3_CLK_ENABLE();
@@ -38,8 +34,51 @@ void PWM_FAN_DRIVER::init()
 	sConfigOC.Pulse = 0; // 初始占空比为0
 	sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH; // 输出极性为高
 	HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_3); // 配置通道3 PWM输出
-
-	// 启动PWM输出
 	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_3);
-
+	status = true;
 }
+
+void PWM_FAN_DRIVER::start()
+{
+	status = true;
+}
+
+void PWM_FAN_DRIVER::stop()
+{
+	status = false;
+}
+
+void PWM_FAN_DRIVER::switchStatus()
+{
+	if (status)
+	{
+		stop();
+	} else
+	{
+		start();
+	}
+	uart1.printf("PWM Fan Driver %s\r\n", status ? "started" : "stopped");
+}
+void PWM_FAN_DRIVER::setTemp(int16_t temp)
+{
+	uint16_t pulse = 0;
+	if (!status) {
+		// 停止状态，始终输出0%占空比
+		pulse = 35;
+	} else if (temp <= 30) {
+		pulse = 2;
+	} else if (temp >= 38) {
+		pulse = htim3.Init.Period + 1;
+	} else {
+		pulse = (uint16_t)((temp - 30) * (htim3.Init.Period + 1) / 8);
+	}
+
+	uart1.printf("Now pulse is %d, temp is %d\r\n", pulse, temp);
+	__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_3, pulse);
+}
+
+void PWM_FAN_DRIVER::updateSpeed()
+{
+	setTemp(ds18b20.readTemperatureNoConvert()); // 从DS18B20读取温度并设置风扇速度
+}
+

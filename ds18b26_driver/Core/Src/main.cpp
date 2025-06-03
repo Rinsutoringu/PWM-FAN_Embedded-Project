@@ -24,6 +24,7 @@
 #include "uart.h"
 #include "button.h"
 #include "ds18b20.h"
+#include "pwmfandriver.h"
 
 
 
@@ -34,6 +35,12 @@ LED blueLED(GPIOA, BLUE_LED_Pin);
 UART uart1(&huart1, 921600, 1000);
 Button button1(GPIOA, BUTTON_Pin);
 DS18B20 ds18b20(GPIOA, DS18B20_Pin, &htim1);
+PWM_FAN_DRIVER pwmfan(GPIOB, GPIO_PIN_0);
+
+uint8_t runtimes = 0;
+enum TempReadState { TEMP_IDLE, TEMP_CONVERTIONG};
+TempReadState tempState = TEMP_IDLE; // 温度读取状态
+uint32_t ReadTempTime = 0;
 
 bool tempFlag = false;
 
@@ -62,19 +69,41 @@ int main(void)
 	uart1.init();
 	button1.setCallback(callback);
 	ds18b20.init();
+	pwmfan.init();
 
 	uart1.print("init success!\r\n");
 	blueLED.turnON();
 
     while (1)
     {
+		runtimes++;
+		if (runtimes >= 5)
+		{
+			if (tempState == TEMP_IDLE)
+			{
+				ds18b20.startConvert();
+				ReadTempTime = HAL_GetTick();
+				tempState = TEMP_CONVERTIONG;
+			} else if (tempState == TEMP_CONVERTIONG)
+			{
+				if (HAL_GetTick() - ReadTempTime >= 750)
+				{
+					pwmfan.updateSpeed();
+					tempState = TEMP_IDLE;
+					ReadTempTime = 0;
+				}
+			}
+			runtimes = 0;
+		}
+
     	if (button1.getButtonFlag()) {
 			button1.read(); // 轮询按钮状态
 		}
 		if (tempFlag)
 		{
 			uart1.printf("Get Temperature: %d\r\n", ds18b20.readTemperature());
-			tempFlag = false; // 重置标志位
+			pwmfan.switchStatus();
+			tempFlag = false;
 		}
 
 

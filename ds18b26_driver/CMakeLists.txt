@@ -74,6 +74,7 @@ include_directories(
         Drivers/LED
         Drivers/DS18B20
         Drivers/BUTTON
+        Drivers/PWM_FAN_Driver
         # 工具类
         Utils/UART
 
@@ -103,6 +104,7 @@ file(GLOB_RECURSE USER_SOURCES
         Drivers/LED/*.cpp
         Drivers/BUTTON/*.cpp
         Drivers/DS18B20/*.cpp
+        Drivers/PWM_FAN_Driver/*.cpp
         Utils/UART/*.cpp
 )
 

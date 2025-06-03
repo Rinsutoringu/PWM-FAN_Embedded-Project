@@ -176,5 +176,23 @@ int16_t DS18B20::readTemperature()
 	uint8_t highByte = read_byte();
 	int16_t raw = (int16_t)((highByte << 8) | lowByte);
 	return raw / 16;
+}
 
+void DS18B20::startConvert()
+{
+	if (!reset()) return;
+	write_byte(DEVICE_JUMP_ROM);
+	write_byte(DEVICE_TEMP_CONVERSION);
+}
+
+int16_t DS18B20::readTemperatureNoConvert()
+{
+	if (!reset()) return -1;
+	write_byte(DEVICE_JUMP_ROM);
+	write_byte(DEVICE_READ_RAM);
+
+	uint8_t lowByte = read_byte();
+	uint8_t highByte = read_byte();
+	int16_t raw = (int16_t)((highByte << 8) | lowByte);
+	return raw / 16;
 }

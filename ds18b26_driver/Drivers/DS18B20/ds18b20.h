@@ -44,6 +44,8 @@ public:
 	bool reset();
 	// 读取温度
 	int16_t readTemperature();
+	void startConvert();
+	int16_t readTemperatureNoConvert();
 
 	bool is_Enable();
 
