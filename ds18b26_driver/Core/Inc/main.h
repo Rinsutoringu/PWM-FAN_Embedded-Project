@@ -64,6 +64,8 @@ void Error_Handler(void);
 #define BUTTON_Pin GPIO_PIN_6
 #define BUTTON_GPIO_Port GPIOA
 #define BUTTON_EXTI_IRQn EXTI9_5_IRQn
+#define DS18B20_Pin GPIO_PIN_7
+#define DS18B20_GPIO_Port GPIOA
 
 /* USER CODE BEGIN Private defines */
 
