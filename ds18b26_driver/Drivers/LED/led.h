@@ -21,6 +21,8 @@ public:
 	 * 实例化LED类
 	 */
 	LED(GPIO_TypeDef *GPIOPort, uint16_t GPIO_Pin);
+
+	void init();
 	/**
      * 点亮LED灯泡
      * @return 成功点亮返回true

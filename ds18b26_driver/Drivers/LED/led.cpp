@@ -8,6 +8,16 @@ LED::LED(GPIO_TypeDef* GPIOPort, uint16_t GPIO_Pin) : state(false), gpioPort(GPI
     // 初始化LED状态为关闭
 }
 
+void LED::init()
+{
+	GPIO_InitTypeDef ledgpioInit;
+	ledgpioInit.Pin = gpioPin;
+	ledgpioInit.Mode = GPIO_MODE_OUTPUT_PP;
+	ledgpioInit.Speed = GPIO_SPEED_FREQ_LOW;
+	ledgpioInit.Pull = GPIO_NOPULL;
+	HAL_GPIO_Init(gpioPort, &ledgpioInit);
+}
+
 // 点亮LED灯泡
 bool LED::turnON() {
     this->state = true;
