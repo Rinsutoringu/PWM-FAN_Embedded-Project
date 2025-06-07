@@ -76,7 +76,7 @@ include_directories(
         Drivers/BUTTON/BUTTONBASE
         Drivers/BUTTON/ButtonNVICManager
         Drivers/PWM_FAN_Driver
-        Drivers/LIGHT_SENSOR
+        Drivers/ADC_SENSOR
         # 工具类
         Utils/UART
 
@@ -108,7 +108,7 @@ file(GLOB_RECURSE USER_SOURCES
         Drivers/BUTTON/ButtonNVICManager/*.cpp
         Drivers/DS18B20/*.cpp
         Drivers/PWM_FAN_Driver/*.cpp
-        Drivers/LIGHT_SENSOR/*.cpp
+        Drivers/ADC_SENSOR/*.cpp
         Utils/UART/*.cpp
 )
 

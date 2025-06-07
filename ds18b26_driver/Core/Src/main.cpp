@@ -45,13 +45,16 @@ bool tempFlag = false;
 
 void callback(bool pressed)
 {
-	if (pressed) tempFlag = true;
+	if (pressed)
+	{
+		uart1.print("Presses!");
+	}
 }
 
 /**
-  * @brief  主程序
-  * @retval int
-  */
+ * @brief  主程序
+ * @retval int
+ */
 int main(void)
 {
 	// 初始化HAL库
@@ -79,7 +82,10 @@ int main(void)
 
     while (1)
     {
-
+    	if (button1.getButtonFlag())
+    	{
+    		button1.read();
+    	}
     }
 }
 
