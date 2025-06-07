@@ -10,6 +10,10 @@ class Button {
 public:
 	typedef void (*Callback)(bool pressed);
 	Button(GPIO_TypeDef* gpioPort, uint16_t gpioPin);
+	// 初始化设备到中断模式
+	void NVIC_init();
+	// 初始化设备到轮询模式
+	void POLL_init();
 	void read(); // 轮询模式，获取消抖后的按钮状态
 	void onInterrupt(); // 中断回调函数
 	bool getIsEnable(); // 获取按钮可用性

@@ -9,6 +9,34 @@ extern UART uart1;
 Button::Button(GPIO_TypeDef* gpioPort, uint16_t gpioPin):
 	state(false), gpioPort(gpioPort), gpioPin(gpioPin), debounceDelay(40), pendingState(false), pendingTime(0), buttonFlag(false) {}
 
+void Button::NVIC_init()
+{
+	// 初始化gpio
+	GPIO_InitTypeDef button;
+	button.Pin = gpioPin;
+	button.Pull = GPIO_PULLUP;
+	button.Mode = GPIO_MODE_IT_RISING_FALLING;
+	button.Speed = GPIO_SPEED_FREQ_LOW;
+	HAL_GPIO_Init(gpioPort, &button);
+	// 设置中断优先级
+	HAL_NVIC_SetPriority(EXTI9_5_IRQn, 0, 0);
+	// 使能中断
+	HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
+	isEnable = true; // 启用按钮
+}
+
+void Button::POLL_init()
+{
+	GPIO_InitTypeDef button;
+	button.Pin = gpioPin;
+	button.Pull = GPIO_PULLUP;
+	button.Mode = GPIO_MODE_INPUT;
+	button.Speed = GPIO_SPEED_FREQ_LOW;
+	HAL_GPIO_Init(gpioPort, &button);
+	isEnable = true; // 启用按钮
+}
+
+
 /**
  * 消抖函数
  * 先抓取按钮当前状态，延迟一下，再读一个，如果俩结果一样，那就确定按钮被按了

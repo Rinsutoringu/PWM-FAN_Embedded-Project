@@ -29,9 +29,8 @@
 
 
 void SystemClock_Config(void);
-static void MX_NVIC_Init(void);
 
-LED blueLED(GPIOA, BLUE_LED_Pin);
+LED blueLED(GPIOA, GPIO_PIN_4);
 UART uart1(&huart1, 921600, 1000);
 Button button1(GPIOA, BUTTON_Pin);
 DS18B20 ds18b20(GPIOA, DS18B20_Pin, &htim1);
@@ -64,53 +63,25 @@ int main(void)
 	// 初始化USART1
 	MX_USART1_UART_Init();
 	MX_TIM1_Init();
-	MX_NVIC_Init();
 
 	uart1.init();
+
+	button1.NVIC_init();
 	button1.setCallback(callback);
+
 	ds18b20.init();
+
 	pwmfan.init();
 
+	blueLED.init();
+
 	uart1.print("init success!\r\n");
-	blueLED.turnON();
 
     while (1)
     {
-		runtimes++;
-		if (runtimes >= 5)
-		{
-			if (tempState == TEMP_IDLE)
-			{
-				ds18b20.startConvert();
-				ReadTempTime = HAL_GetTick();
-				tempState = TEMP_CONVERTIONG;
-			} else if (tempState == TEMP_CONVERTIONG)
-			{
-				if (HAL_GetTick() - ReadTempTime >= 750)
-				{
-					pwmfan.updateSpeed();
-					tempState = TEMP_IDLE;
-					ReadTempTime = 0;
-				}
-			}
-			runtimes = 0;
-		}
-
-    	if (button1.getButtonFlag()) {
-			button1.read(); // 轮询按钮状态
-		}
-		if (tempFlag)
-		{
-			uart1.printf("Get Temperature: %d\r\n", ds18b20.readTemperature());
-			pwmfan.switchStatus();
-			tempFlag = false;
-		}
-
 
     }
 }
-
-
 
 /**
   * @brief System Clock Configuration
@@ -146,16 +117,6 @@ void SystemClock_Config(void)
     {
         Error_Handler();
     }
-}
-
-/**
- * 初始化NVIC中断
- */
-static void MX_NVIC_Init(void)
-{
-	/* EXTI9_5_IRQn interrupt configuration */
-	HAL_NVIC_SetPriority(EXTI9_5_IRQn, 0, 0);
-	HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
 }
 
 /** 这个函数在发生错误时执行
