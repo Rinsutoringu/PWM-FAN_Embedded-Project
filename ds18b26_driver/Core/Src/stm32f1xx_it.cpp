@@ -1,7 +1,7 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file    stm32f1xx_it.c
+  * @file    stm32f1xx_it.cpp
   * @brief   Interrupt Service Routines.
   ******************************************************************************
   * @attention
@@ -20,13 +20,16 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32f1xx_it.h"
+#include "stm32f1xx_hal.h"
+#include "uart.h"
+
+extern UART uart1;
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN TD */
-
 /* USER CODE END TD */
 
 /* Private define ------------------------------------------------------------*/
@@ -88,8 +91,11 @@ void HardFault_Handler(void)
   /* USER CODE END HardFault_IRQn 0 */
   while (1)
   {
-    /* USER CODE BEGIN W1_HardFault_IRQn 0 */
-    /* USER CODE END W1_HardFault_IRQn 0 */
+  	uint32_t *hardfault_args = (uint32_t *)__get_MSP(); // 获取堆栈指针
+  	uint32_t hardfault_pc = hardfault_args[6]; // 获取发生错误的PC值
+  	uint32_t hardfault_lr = hardfault_args[5]; // 获取发生错误的LR值
+
+  	uart1.printf("HardFault occurred! PC: 0x%08X, LR: 0x%08X\n", hardfault_pc, hardfault_lr);
   }
 }
 
@@ -210,6 +216,11 @@ void EXTI9_5_IRQHandler(void)
   /* USER CODE BEGIN EXTI9_5_IRQn 1 */
 
   /* USER CODE END EXTI9_5_IRQn 1 */
+}
+extern DMA_HandleTypeDef dma;
+void DMA1_Channel1_IRQHandler(void)
+{
+	HAL_DMA_IRQHandler(&dma);
 }
 
 /* USER CODE BEGIN 1 */

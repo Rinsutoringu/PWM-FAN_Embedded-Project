@@ -17,6 +17,9 @@
   */
 // #include "stm32f1xx_hal.h"
 #include "main.h"
+
+#include "adc.h"
+#include "adcsensor.h"
 #include "buttonbase.h"
 #include "buttonnvicmanager.h"
 #include "ds18b20.h"
@@ -35,6 +38,8 @@ Button button1(GPIOA, GPIO_PIN_6);
 DS18B20 ds18b20(GPIOA, DS18B20_Pin, &htim1);
 PWM_FAN_DRIVER pwmfan(GPIOB, GPIO_PIN_0);
 buttonnvicmanager buttonNvicManager(button1, EXTI9_5_IRQn);
+DMA_HandleTypeDef dma;
+adcsensor adcSensor(GPIOA, GPIO_PIN_0, &hadc1, &dma, ADC_CHANNEL_0);
 
 uint8_t runtimes = 0;
 enum TempReadState { TEMP_IDLE, TEMP_CONVERTIONG};
@@ -78,10 +83,16 @@ int main(void)
 
 	blueLED.init();
 
+	adcSensor.init();
+	adcSensor.startDMA();
+
 	uart1.print("init success!\r\n");
 
     while (1)
     {
+    	HAL_Delay(100); // 给DMA一点时间采集
+    	uint32_t* buffer = adcSensor.getBuffer();
+    	uart1.printf("get adc value: %lu\r\n", buffer[0]);
     	if (button1.getButtonFlag())
     	{
     		button1.read();
