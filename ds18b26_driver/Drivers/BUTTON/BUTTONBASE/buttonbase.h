@@ -1,19 +1,20 @@
 //
 // Created by RinChord on 25-5-31.
 //
+
+#pragma once
 #include "stm32f1xx_hal.h"
 #include "uart.h"
-#pragma once
-
 
 class Button {
 public:
 	typedef void (*Callback)(bool pressed);
 	Button(GPIO_TypeDef* gpioPort, uint16_t gpioPin);
-	// 初始化设备到中断模式
-	void NVIC_init();
 	// 初始化设备到轮询模式
 	void POLL_init();
+
+	uint16_t getGpioPin();
+	GPIO_TypeDef* getGpioPort(); // 获取GPIO端口
 	void read(); // 轮询模式，获取消抖后的按钮状态
 	void onInterrupt(); // 中断回调函数
 	bool getIsEnable(); // 获取按钮可用性

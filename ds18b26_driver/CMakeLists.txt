@@ -73,7 +73,8 @@ include_directories(
         # 我自己写的驱动
         Drivers/LED
         Drivers/DS18B20
-        Drivers/BUTTON
+        Drivers/BUTTON/BUTTONBASE
+        Drivers/BUTTON/ButtonNVICManager
         Drivers/PWM_FAN_Driver
         Drivers/LIGHT_SENSOR
         # 工具类
@@ -103,7 +104,8 @@ file(GLOB_RECURSE USER_SOURCES
         Core/*.c
         Core/*.cpp
         Drivers/LED/*.cpp
-        Drivers/BUTTON/*.cpp
+        Drivers/BUTTON/BUTTONBASE/*.cpp
+        Drivers/BUTTON/ButtonNVICManager/*.cpp
         Drivers/DS18B20/*.cpp
         Drivers/PWM_FAN_Driver/*.cpp
         Drivers/LIGHT_SENSOR/*.cpp

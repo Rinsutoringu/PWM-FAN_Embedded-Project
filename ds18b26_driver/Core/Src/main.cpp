@@ -17,24 +17,24 @@
   */
 // #include "stm32f1xx_hal.h"
 #include "main.h"
-#include "tim.h"
+#include "buttonbase.h"
+#include "buttonnvicmanager.h"
+#include "ds18b20.h"
 #include "gpio.h"
 #include "led.h"
-#include "usart.h"
-#include "uart.h"
-#include "button.h"
-#include "ds18b20.h"
 #include "pwmfandriver.h"
-
-
+#include "tim.h"
+#include "uart.h"
+#include "usart.h"
 
 void SystemClock_Config(void);
 
 LED blueLED(GPIOA, GPIO_PIN_4);
 UART uart1(&huart1, 921600, 1000);
-Button button1(GPIOA, BUTTON_Pin);
+Button button1(GPIOA, GPIO_PIN_6);
 DS18B20 ds18b20(GPIOA, DS18B20_Pin, &htim1);
 PWM_FAN_DRIVER pwmfan(GPIOB, GPIO_PIN_0);
+buttonnvicmanager buttonNvicManager(button1, EXTI9_5_IRQn);
 
 uint8_t runtimes = 0;
 enum TempReadState { TEMP_IDLE, TEMP_CONVERTIONG};
@@ -66,7 +66,7 @@ int main(void)
 
 	uart1.init();
 
-	button1.NVIC_init();
+	buttonNvicManager.init();
 	button1.setCallback(callback);
 
 	ds18b20.init();

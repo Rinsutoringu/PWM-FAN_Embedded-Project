@@ -2,27 +2,21 @@
 // Created by RinChord on 25-5-31.
 //
 
-#include "button.h"
+#include "buttonbase.h"
 
 extern UART uart1;
 
 Button::Button(GPIO_TypeDef* gpioPort, uint16_t gpioPin):
 	state(false), gpioPort(gpioPort), gpioPin(gpioPin), debounceDelay(40), pendingState(false), pendingTime(0), buttonFlag(false) {}
 
-void Button::NVIC_init()
+uint16_t Button::getGpioPin()
 {
-	// 初始化gpio
-	GPIO_InitTypeDef button;
-	button.Pin = gpioPin;
-	button.Pull = GPIO_PULLUP;
-	button.Mode = GPIO_MODE_IT_RISING_FALLING;
-	button.Speed = GPIO_SPEED_FREQ_LOW;
-	HAL_GPIO_Init(gpioPort, &button);
-	// 设置中断优先级
-	HAL_NVIC_SetPriority(EXTI9_5_IRQn, 0, 0);
-	// 使能中断
-	HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
-	isEnable = true; // 启用按钮
+	return gpioPin; // 获取GPIO引脚
+}
+
+GPIO_TypeDef* Button::getGpioPort()
+{
+	return gpioPort; // 获取GPIO端口
 }
 
 void Button::POLL_init()
