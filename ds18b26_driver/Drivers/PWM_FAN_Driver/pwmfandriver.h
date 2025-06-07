@@ -13,7 +13,7 @@ extern DS18B20 ds18b20;
 
 class PWM_FAN_DRIVER {
 private:
-	GPIO_TypeDef* gpioPort;
+	GPIO_TypeDef						* gpioPort;
 	uint16_t gpioPin;
 	int16_t temp;
 	TIM_HandleTypeDef htim3;

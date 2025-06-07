@@ -75,6 +75,7 @@ include_directories(
         Drivers/DS18B20
         Drivers/BUTTON
         Drivers/PWM_FAN_Driver
+        Drivers/LIGHT_SENSOR
         # 工具类
         Utils/UART
 
@@ -105,6 +106,7 @@ file(GLOB_RECURSE USER_SOURCES
         Drivers/BUTTON/*.cpp
         Drivers/DS18B20/*.cpp
         Drivers/PWM_FAN_Driver/*.cpp
+        Drivers/LIGHT_SENSOR/*.cpp
         Utils/UART/*.cpp
 )
 
@@ -118,7 +120,9 @@ set(SOURCES
         Core/Startup/startup_stm32f103c8tx.s
 )
 
-set(LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/STM32F103C8TX_FLASH.ld)
+set(LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/STM32F103C8TX_FLASH.ld
+        Drivers/LIGHT_SENSOR/lightsensor.cpp
+        Drivers/LIGHT_SENSOR/lightsensor.h)
 
 add_link_options(-Wl,-gc-sections,--print-memory-usage,-Map=${PROJECT_BINARY_DIR}/${PROJECT_NAME}.map)
 add_link_options(-mcpu=cortex-m3 -mthumb -mthumb-interwork)
