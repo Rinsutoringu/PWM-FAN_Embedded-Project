@@ -2,11 +2,11 @@
 // Created by RinChord on 25-5-31.
 //
 
-#include "main.h"
-#include "stm32f1xx_it.h"
-#include "stm32f1xx_hal.h"
 #include "buttonbase.h"
 #include "buttonnvicmanager.h"
+#include "main.h"
+#include "stm32f1xx_hal.h"
+#include "stm32f1xx_it.h"
 
 extern Button button1;
 extern buttonnvicmanager buttonNvicManager;

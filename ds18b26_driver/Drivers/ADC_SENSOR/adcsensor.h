@@ -1,37 +1,27 @@
-//
-// Created by Chord on 25-6-7.
-//
 
 #pragma once
-
 #include "stm32f1xx_hal.h"
-#include "stm32f1xx_hal_adc.h"
 
-#include "uart.h"
-
-extern UART uart1;
-
-
-class adcsensor {
+/**
+ * 此类负责初始化ADC外设，DMA由其他类管理
+ */
+class adcsensor
+{
 private:
+	// 设备所在GPIO端口
 	GPIO_TypeDef* gpioPort;
-	uint8_t gpioPin;
-	// ADC硬件句柄
-	ADC_HandleTypeDef * adc;
-	DMA_HandleTypeDef * dma;
-	uint32_t adcChannel;
-
-	// ADC缓冲区
-	uint32_t adcBuffer[10];
-
+	// 设备所在GPIO引脚
+	uint16_t gpioPin;
+	// ADC句柄
+	ADC_HandleTypeDef* hadc;
+	DMA_HandleTypeDef* hdma;
+	// ADC通道
+	uint32_t channel;
+	// DMA缓冲区
+	uint32_t buffer[1]; // 假设只需要一个采样值
 public:
-	adcsensor(GPIO_TypeDef* gpioPort, uint8_t gpioPin, ADC_HandleTypeDef * adc, DMA_HandleTypeDef * dma, uint32_t adcChannel);
+	adcsensor(GPIO_TypeDef* gpioPort, uint16_t gpioPin, ADC_HandleTypeDef* hadc,uint32_t channel, DMA_HandleTypeDef* hdma);
 	void init();
 	void startDMA();
-	uint32_t* getBuffer();
-
-
+	uint32_t getBuffer();
 };
-
-
-

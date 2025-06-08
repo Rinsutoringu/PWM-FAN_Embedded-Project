@@ -218,7 +218,7 @@ void EXTI9_5_IRQHandler(void)
   /* USER CODE END EXTI9_5_IRQn 1 */
 }
 extern DMA_HandleTypeDef dma;
-void DMA1_Channel1_IRQHandler(void)
+extern "C" void DMA1_Channel1_IRQHandler(void)
 {
 	HAL_DMA_IRQHandler(&dma);
 }

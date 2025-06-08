@@ -39,7 +39,7 @@ DS18B20 ds18b20(GPIOA, DS18B20_Pin, &htim1);
 PWM_FAN_DRIVER pwmfan(GPIOB, GPIO_PIN_0);
 buttonnvicmanager buttonNvicManager(button1, EXTI9_5_IRQn);
 DMA_HandleTypeDef dma;
-adcsensor adcSensor(GPIOA, GPIO_PIN_0, &hadc1, &dma, ADC_CHANNEL_0);
+adcsensor adcSensor(GPIOA, GPIO_PIN_0, &hadc1, ADC_CHANNEL_0, &dma);
 
 uint8_t runtimes = 0;
 enum TempReadState { TEMP_IDLE, TEMP_CONVERTIONG};
@@ -47,6 +47,10 @@ TempReadState tempState = TEMP_IDLE; // 温度读取状态
 uint32_t ReadTempTime = 0;
 
 bool tempFlag = false;
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
+{
+    uart1.printf("DMA callback! buffer[0]=%u\r\n", adcSensor.getBuffer());
+}
 
 void callback(bool pressed)
 {
@@ -66,37 +70,19 @@ int main(void)
     HAL_Init();
 	// 配置系统时钟
     SystemClock_Config();
-	// 初始化所有外设
-	MX_GPIO_Init();
-	// 初始化USART1
+    // 初始化串口
 	MX_USART1_UART_Init();
-	MX_TIM1_Init();
 
 	uart1.init();
 
-	buttonNvicManager.init();
-	button1.setCallback(callback);
-
-	ds18b20.init();
-
-	pwmfan.init();
 
 	blueLED.init();
 
 	adcSensor.init();
 	adcSensor.startDMA();
 
-	uart1.print("init success!\r\n");
-
-    while (1)
-    {
-    	HAL_Delay(100); // 给DMA一点时间采集
-    	uint32_t* buffer = adcSensor.getBuffer();
-    	uart1.printf("get adc value: %lu\r\n", buffer[0]);
-    	if (button1.getButtonFlag())
-    	{
-    		button1.read();
-    	}
+    while (1) {
+    	uart1.printf("get buffer: %u\r\n", adcSensor.getBuffer());
     }
 }
 

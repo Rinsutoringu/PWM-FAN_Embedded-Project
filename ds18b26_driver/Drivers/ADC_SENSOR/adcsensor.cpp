@@ -1,80 +1,63 @@
-//
-// Created by Chord on 25-6-7.
-//
-
 #include "adcsensor.h"
 
-adcsensor::adcsensor(GPIO_TypeDef* gpioPort, uint8_t gpioPin, ADC_HandleTypeDef * adc, DMA_HandleTypeDef * dma, uint32_t adcChannel) :
-	gpioPort(gpioPort),
-	gpioPin(gpioPin),
-	adc(adc),
-	dma(dma),
-	adcChannel(adcChannel)
-{
-	// 初始化ADC缓冲区
-	for (int i = 0; i < 10; i++) {
-		adcBuffer[i] = 0;
-	}
-}
+adcsensor::adcsensor(GPIO_TypeDef* gpioPort, uint16_t gpioPin, ADC_HandleTypeDef* hadc,uint32_t channel, DMA_HandleTypeDef* hdma) :
+	gpioPort(gpioPort), gpioPin(gpioPin), hadc(hadc), hdma(hdma)
+{}
 
 void adcsensor::init()
 {
-	// 初始化GPIO
-	GPIO_InitTypeDef adcGPIO;
-	adcGPIO.Pin = gpioPin;
-	adcGPIO.Pull = GPIO_NOPULL;
-	adcGPIO.Mode = GPIO_MODE_ANALOG; // 模拟输入模式
-	adcGPIO.Speed = GPIO_SPEED_FREQ_HIGH;
-	HAL_GPIO_Init(gpioPort, &adcGPIO);
-
-	// 初始化ADC
-	adc->Instance = ADC1;
-	// 启动扫描模式
-	adc->Init.ScanConvMode = ADC_SCAN_DISABLE;
-	// 设置ADC通道
-	adc->Init.NbrOfConversion = 1;
-
-	// 启动连续转换模式
-	adc->Init.ContinuousConvMode = ENABLE;
-	// 硬件触发关闭
-	adc->Init.ExternalTrigConv = ADC_EXTERNALTRIGCONVEDGE_NONE;
-	// 数据右对齐
-	adc->Init.DataAlign = ADC_DATAALIGN_RIGHT;
-	HAL_ADC_Init(adc);
+	// 配置GPIO引脚为模拟输入模式
+	GPIO_InitTypeDef GPIO_InitStruct = {0};
+	GPIO_InitStruct.Pin = gpioPin;
+	GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	HAL_GPIO_Init(gpioPort, &GPIO_InitStruct);
 
 	// 初始化DMA
 	__HAL_RCC_DMA1_CLK_ENABLE();
-	dma->Instance = DMA1_Channel1;
-	dma->Init.Direction = DMA_PERIPH_TO_MEMORY;
-	dma->Init.PeriphInc = DMA_PINC_DISABLE; // 外设地址不递增
-	dma->Init.MemInc = DMA_MINC_ENABLE;
-	dma->Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD; // 外设对齐方式
-	dma->Init.MemDataAlignment = DMA_PDATAALIGN_WORD; // 内存对齐方式
-	dma->Init.Mode = DMA_CIRCULAR; // 循环模式
-	dma->Init.Priority = DMA_PRIORITY_HIGH; // 高优先级
-	HAL_DMA_Init(dma);
+	hdma->Instance = DMA1_Channel1; // 视你的ADC通道而定
+	hdma->Init.Direction = DMA_PERIPH_TO_MEMORY;
+	hdma->Init.PeriphInc = DMA_PINC_DISABLE;
+	hdma->Init.MemInc = DMA_MINC_ENABLE;
+	hdma->Init.PeriphDataAlignment = DMA_PDATAALIGN_HALFWORD;
+	hdma->Init.MemDataAlignment = DMA_MDATAALIGN_HALFWORD;
+	hdma->Init.Mode = DMA_CIRCULAR;
+	hdma->Init.Priority = DMA_PRIORITY_LOW;
+	HAL_DMA_Init(hdma);
 
-	// 关联DMA和ADC
-	__HAL_LINKDMA(adc, DMA_Handle, *dma);
+	// 关联DMA到ADC
+	__HAL_LINKDMA(hadc, DMA_Handle, *hdma);
 
-	// set adc device 1
-	ADC_ChannelConfTypeDef adcChannelConfig;
-	// ADC通道
-	adcChannelConfig.Channel = adcChannel;
-	// 优先级
-	adcChannelConfig.Rank = ADC_REGULAR_RANK_1;
-	// 采样时间
-	adcChannelConfig.SamplingTime = ADC_SAMPLETIME_55CYCLES_5;
-	HAL_ADC_ConfigChannel(adc, &adcChannelConfig);
-	dma->Parent = adc;
+	// 初始化ADC设备
+	hadc->Instance = ADC1; // 根据实际ADC外设修改
+	hadc->Init.ContinuousConvMode = ENABLE;           // 使能连续转换
+	hadc->Init.DataAlign = ADC_DATAALIGN_RIGHT;       // 数据右对齐
+	hadc->Init.ScanConvMode = ADC_SCAN_DISABLE;       // 单通道
+	hadc->Init.ExternalTrigConv = ADC_SOFTWARE_START; // 软件触发
+	hadc->Init.DiscontinuousConvMode = DISABLE;
+	hadc->Init.NbrOfConversion = 1;
+	if (HAL_ADC_Init(hadc) != HAL_OK)
+	{
+		// 错误处理
+	}
 
+	// 配置ADC通道
+	ADC_ChannelConfTypeDef sConfig = {0};
+	sConfig.Channel = channel;
+	sConfig.Rank = ADC_REGULAR_RANK_1;
+	sConfig.SamplingTime = ADC_SAMPLETIME_28CYCLES_5; // 推荐采样时间
+	if (HAL_ADC_ConfigChannel(hadc, &sConfig) != HAL_OK)
+	{
+		// 错误处理
+	}
 }
-
-void adcsensor::startDMA() {
-	HAL_ADC_Start_DMA(adc, adcBuffer, 10); // 启动 ADC 和 DMA，采集 10 个数据
-}
-
-uint32_t* adcsensor::getBuffer()
+void adcsensor::startDMA()
 {
-	return adcBuffer;
+	HAL_ADC_Start_DMA(hadc, (uint32_t*)buffer, 1); // buffer为你的数据缓存
+}
+uint32_t adcsensor::getBuffer()
+{
+	// 读取DMA缓冲区数据
+	// 这里可以根据需要处理buffer中的数据
+	return buffer[0]; // 返回第一个采样值
 }
