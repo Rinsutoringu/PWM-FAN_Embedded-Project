@@ -39,7 +39,7 @@ DS18B20 ds18b20(GPIOA, DS18B20_Pin, &htim1);
 PWM_FAN_DRIVER pwmfan(GPIOB, GPIO_PIN_0);
 buttonnvicmanager buttonNvicManager(button1, EXTI9_5_IRQn);
 DMA_HandleTypeDef dma;
-adcsensor adcSensor(GPIOA, GPIO_PIN_0, &hadc1, ADC_CHANNEL_0, &dma);
+adcsensor adcSensor(GPIOA, GPIO_PIN_0, &hadc1, ADC_CHANNEL_0, ADC_CHANNEL_1,&dma);
 
 uint8_t runtimes = 0;
 enum TempReadState { TEMP_IDLE, TEMP_CONVERTIONG};
@@ -49,7 +49,7 @@ uint32_t ReadTempTime = 0;
 bool tempFlag = false;
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 {
-    uart1.printf("DMA callback! buffer[0]=%u\r\n", adcSensor.getBuffer());
+    // uart1.printf("DMA callback! buffer[0]=%u\r\n", adcSensor.getBuffer());
 }
 
 void callback(bool pressed)
@@ -82,7 +82,11 @@ int main(void)
 	adcSensor.startDMA();
 
     while (1) {
-    	uart1.printf("get buffer: %u\r\n", adcSensor.getBuffer());
+    	uart1.printf("get buffer from Device 1: %u\r\n", adcSensor.getBuffer(0));
+    	uart1.printf("get buffer from Device 2: %u\r\n", adcSensor.getBuffer(1));
+		HAL_Delay(200);
+    	uart1.print("\033[2J\033[H");
+
     }
 }
 

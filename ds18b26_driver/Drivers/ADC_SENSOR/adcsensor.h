@@ -16,12 +16,14 @@ private:
 	ADC_HandleTypeDef* hadc;
 	DMA_HandleTypeDef* hdma;
 	// ADC通道
-	uint32_t channel;
+	uint32_t channel_1;
+	uint32_t channel_2;
+
 	// DMA缓冲区
-	uint32_t buffer[1]; // 假设只需要一个采样值
+	uint16_t buffer[2]; // 假设只需要一个采样值
 public:
-	adcsensor(GPIO_TypeDef* gpioPort, uint16_t gpioPin, ADC_HandleTypeDef* hadc,uint32_t channel, DMA_HandleTypeDef* hdma);
+	adcsensor(GPIO_TypeDef* gpioPort, uint16_t gpioPin, ADC_HandleTypeDef* hadc,uint32_t channel_1, uint32_t channel_2, DMA_HandleTypeDef* hdma);
 	void init();
 	void startDMA();
-	uint32_t getBuffer();
+	uint32_t getBuffer(uint8_t idx);
 };
