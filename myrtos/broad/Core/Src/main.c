@@ -38,7 +38,10 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
+void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName) {
 
+  while (1) {}
+}
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/

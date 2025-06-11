@@ -18,11 +18,8 @@ void MydefaultTask(void *argument)
     UNUSED(argument);
     while (1)
     {
-        osDelay(100);
-        // HAL_GPIO_WritePin(BLUE_LED_GPIO_Port, BLUE_LED_Pin, GPIO_PIN_RESET);
-        // osDelay(1000);
-        // HAL_GPIO_WritePin(BLUE_LED_GPIO_Port, BLUE_LED_Pin, GPIO_PIN_SET);
-
+        HAL_GPIO_TogglePin(BLUE_LED_GPIO_Port, BLUE_LED_Pin);
+        osDelay(1000);
     }
 }
 

@@ -150,21 +150,21 @@ static osKernelState_t KernelState = osKernelInactive;
 /* CMSIS SysTick interrupt handler prototype */
 extern void SysTick_Handler     (void);
 /* FreeRTOS tick timer interrupt handler prototype */
-extern void xPortSysTickHandler (void);
+// extern void xPortSysTickHandler (void);
 
 /*
   SysTick handler implementation that also clears overflow flag.
 */
 #if (USE_CUSTOM_SYSTICK_HANDLER_IMPLEMENTATION == 0)
-void SysTick_Handler (void) {
-  /* Clear overflow flag */
-  SysTick->CTRL;
-
-  if (xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED) {
-    /* Call tick handler */
-    xPortSysTickHandler();
-  }
-}
+// void SysTick_Handler (void) {
+//   /* Clear overflow flag */
+//   SysTick->CTRL;
+//
+//   if (xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED) {
+//     /* Call tick handler */
+//     xPortSysTickHandler();
+//   }
+// }
 #endif
 #endif /* SysTick */
 
