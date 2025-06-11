@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.22)
 
-project(stm32f103)
+add_subdirectory(cmake/stm32cubemx)
+
+project(stm32f103 C ASM)
 
 # 递归查找 broad 目录下所有 C 源文件和汇编文件
 file(GLOB_RECURSE BROAD_SOURCES
@@ -25,4 +27,3 @@ target_include_directories(stm32f103 PUBLIC
     ${BROAD_INCLUDE_DIRS}
 )
 
-add_subdirectory(cmake/stm32cubemx)
