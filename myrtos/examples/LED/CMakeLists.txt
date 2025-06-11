@@ -9,3 +9,4 @@ add_executable(${CMAKE_PROJECT_NAME}
 target_link_libraries(${CMAKE_PROJECT_NAME}
     stm32cubemx
 )
+target_link_options(${CMAKE_PROJECT_NAME} PRIVATE -Wl,--gc-sections)
