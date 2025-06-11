@@ -1,4 +1,6 @@
 cmake_minimum_required(VERSION 3.22)
+add_definitions(-DSTM32F103xB)
+add_definitions(-DCMSIS_device_header="stm32f1xx.h")
 
 # 如果没有指定工具链，则自动设置
 if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)

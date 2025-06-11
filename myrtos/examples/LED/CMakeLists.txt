@@ -7,5 +7,6 @@ add_executable(${CMAKE_PROJECT_NAME}
 )
 
 target_link_libraries(${CMAKE_PROJECT_NAME}
-    stm32f103
+#    stm32f103
+    stm32cubemx
 )
