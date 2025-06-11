@@ -93,6 +93,7 @@ to exclude the API function. */
 #define INCLUDE_xTimerPendFunctionCall      1
 #define INCLUDE_xQueueGetMutexHolder        1
 #define INCLUDE_uxTaskGetStackHighWaterMark 1
+#define INCLUDE_xTaskGetCurrentTaskHandle   1
 #define INCLUDE_eTaskGetState               1
 
 /*
@@ -145,7 +146,5 @@ standard names. */
 /* USER CODE BEGIN Defines */
 /* Section where parameter definitions can be added (for instance, to override default ones in FreeRTOS.h) */
 /* USER CODE END Defines */
-#define INCLUDE_xTaskGetCurrentTaskHandle    1
+
 #endif /* FREERTOS_CONFIG_H */
-
-
