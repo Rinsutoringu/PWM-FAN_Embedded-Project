@@ -10,7 +10,7 @@ project(myrtos)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
-add_subdirectory(broad)
+add_subdirectory(broads)
 add_subdirectory(examples)
 
 
