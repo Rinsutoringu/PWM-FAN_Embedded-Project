@@ -58,6 +58,7 @@ const osThreadAttr_t MydefaultTask_attributes = {
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
 __weak void MydefaultTask(void *argument) {}
+__weak void RTOS_Threads_Init(void) {}
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void *argument);
@@ -95,7 +96,7 @@ void MX_FREERTOS_Init(void) {
   MydefaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &MydefaultTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
-  /* add threads, ... */
+  RTOS_Threads_Init();
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_EVENTS */
