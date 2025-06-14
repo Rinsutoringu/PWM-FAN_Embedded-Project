@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "stm32f103xb.h"
-#include "stm32f1xx_hal_tim.h"
+#include "cmsis_os2.h"
+#include "stm32f1xx_hal.h"
 
 
 class Buzzer {

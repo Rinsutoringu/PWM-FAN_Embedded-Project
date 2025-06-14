@@ -20,7 +20,7 @@ void RTOS_Threads_Init(void) {
 	//    extimuTaskHandle = osThreadNew(extimuTask, nullptr, &extimuTaskAttribute);
 	// 分别启动每个任务
 	BlueLedTaskHandle = osThreadNew(BlueLedTask, nullptr, &BlueLedTaskAttribute);
-	RedLedTaskHandle = osThreadNew(RedLedTask, nullptr, &RedLedTaskAttribute);
+	// RedLedTaskHandle = osThreadNew(RedLedTask, nullptr, &RedLedTaskAttribute);
 }
 
 #ifdef __cplusplus

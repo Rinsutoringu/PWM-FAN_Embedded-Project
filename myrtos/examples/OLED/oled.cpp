@@ -7,3 +7,7 @@
 #include "cmsis_os.h"
 #include "stm32f1xx_it.h"
 
+void RTOS_Threads_Init(void) {
+	//    extimuTaskHandle = osThreadNew(extimuTask, nullptr, &extimuTaskAttribute);
+	// 分别启动每个任务
+}

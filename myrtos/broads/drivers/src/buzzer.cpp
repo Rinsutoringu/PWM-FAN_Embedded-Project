@@ -4,8 +4,7 @@
 
 #include "../include/buzzer.h"
 
-#include "cmsis_os2.h"
-#include "stm32f1xx_hal_gpio.h"
+
 
 Buzzer::Buzzer(GPIO_TypeDef* buzzer_port, uint16_t buzzer_pin, TIM_HandleTypeDef* buzzer_tim, uint32_t buzzerchannel):
 	buzzer_port_(buzzer_port),
@@ -20,9 +19,9 @@ void Buzzer::init()
 {
 	GPIO_InitTypeDef buzzer_gpio;
 	buzzer_gpio.Pin = buzzer_pin_;
-	buzzer_gpio.Mode = GPIO_MODE_OUTPUT_PP;
+	buzzer_gpio.Mode = GPIO_MODE_AF_PP;
 	buzzer_gpio.Speed = GPIO_SPEED_FREQ_MEDIUM;
-	buzzer_gpio.Pull = GPIO_PULLDOWN;
+	buzzer_gpio.Pull = GPIO_NOPULL;
 	HAL_GPIO_Init(buzzer_port_, &buzzer_gpio);
 
 	__HAL_RCC_TIM3_CLK_ENABLE();
@@ -60,7 +59,16 @@ void Buzzer::stop_buzzer()
 // 配置蜂鸣器频率
 void Buzzer::set_frequency(uint32_t frequency)
 {
-	sConfigOC_.Pulse = frequency;
+	// 以36MHz时钟为例，目标频率 = 36MHz / ((PSC+1)*(ARR+1))
+	// 这里简单设PSC=71，则计数频率500kHz，ARR = (500000/frequency)-1
+	uint32_t psc = 71;
+	uint32_t arr = 500000 / frequency - 1;
+
+	buzzer_tim_->Init.Prescaler = psc;
+	buzzer_tim_->Init.Period = arr;
+	HAL_TIM_PWM_Init(buzzer_tim_);
+
+	sConfigOC_.Pulse = (arr + 1) / 2; // 50%占空比
 	HAL_TIM_PWM_ConfigChannel(buzzer_tim_, &sConfigOC_, buzzer_channel_);
 }
 
