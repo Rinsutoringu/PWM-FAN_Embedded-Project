@@ -21,7 +21,7 @@ void RedLedTask(void *argument)
     while (1)
     {
         HAL_GPIO_TogglePin(RED_LED_GPIO_Port, RED_LED_Pin);
-        osDelay(1000);
+        osDelay(600);
     }
 }
 
