@@ -15,5 +15,13 @@ Buzzer buzzer(BUZZER_PIN_GPIO_Port, BUZZER_PIN_Pin, &htim3, TIM_CHANNEL_1);
 
 void RTOS_Threads_Init(void) {
 	buzzer.init();
-	buzzer.play(1000, 2000);
+	
+	while (1)
+	{
+		buzzer.start_buzzer();
+		osDelay(500);
+		buzzer.stop_buzzer();
+		osDelay(500);
+	}
+
 }

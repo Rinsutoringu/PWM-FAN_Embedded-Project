@@ -25,6 +25,7 @@ void Buzzer::init()
 	HAL_GPIO_Init(buzzer_port_, &buzzer_gpio);
 
 	__HAL_RCC_TIM3_CLK_ENABLE();
+	__HAL_RCC_GPIOB_CLK_ENABLE();
 	// 计算公式: 频率 = TIM_CLK / ((PSC+1)*(ARR+1))
 	// 例如: 36MHz / ((899+1)*(19+1)) = 2kHz
 
@@ -39,7 +40,7 @@ void Buzzer::init()
 	// 配置PWM通道
 	sConfigOC_.OCMode = TIM_OCMODE_PWM1;
 	sConfigOC_.Pulse = 10; // 占空比50%，Pulse=Period/2
-	sConfigOC_.OCPolarity = TIM_OCPOLARITY_HIGH;
+	sConfigOC_.OCPolarity = TIM_OCPOLARITY_LOW;
 	sConfigOC_.OCFastMode = TIM_OCFAST_DISABLE;
 	HAL_TIM_PWM_ConfigChannel(buzzer_tim_, &sConfigOC_, buzzer_channel_);
 }
