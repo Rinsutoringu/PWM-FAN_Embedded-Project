@@ -1,16 +1,15 @@
 file(GLOB_RECURSE DRIVER_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
-file(GLOB_RECURSE DRIVER_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h)
 
-add_library(drivers STATIC ${DRIVER_SOURCES} ${DRIVER_HEADERS})
+add_board_specific_library(${BOARD_NAME}_drivers
+		TARGET ${BOARD_NAME}
+		SOURCES ${DRIVER_SOURCES}
+		INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/include
+		DEPENDS ${BOARD_NAME}_platform
+)
 
-target_include_directories(drivers PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
-	${CMAKE_CURRENT_SOURCE_DIR}/../stm32c8t6/Core/Inc
-	${CMAKE_CURRENT_SOURCE_DIR}/../stm32c8t6/Drivers/STM32F1xx_HAL_Driver/Inc/Legacy
-	${CMAKE_CURRENT_SOURCE_DIR}/../stm32c8t6/Drivers/STM32F1xx_HAL_Driver/Inc
-	${CMAKE_CURRENT_SOURCE_DIR}/../stm32c8t6/Middlewares/Third_Party/FreeRTOS/Source/include
-	${CMAKE_CURRENT_SOURCE_DIR}/../stm32c8t6/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2
-	${CMAKE_CURRENT_SOURCE_DIR}/../stm32c8t6/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3
-	${CMAKE_CURRENT_SOURCE_DIR}/../stm32c8t6/Drivers/CMSIS/Device/ST/STM32F1xx/Include
-	${CMAKE_CURRENT_SOURCE_DIR}/../stm32c8t6/Drivers/CMSIS/Include
-xx)
+# DEBUG
+get_target_property(DRIVER_SRCS ${BOARD_NAME}_drivers SOURCES)
+message(STATUS "[${BOARD_NAME}_drivers] sources: ${DRIVER_SRCS}")
+
+get_target_property(PROJECT_SRCS ${BOARD_NAME} SOURCES)
+message(STATUS "[${BOARD_NAME}] sources: ${PROJECT_SRCS}")

@@ -5,6 +5,9 @@
 #include "stm32f1xx_hal.h"
 #include "gpio.h"
 #include "main.h"
+
+#include <cstdio>
+
 #include "cmsis_os.h"
 #include "stm32f1xx_it.h"
 #include "blueled.h"
@@ -21,6 +24,7 @@ void RTOS_Threads_Init(void) {
 	// 分别启动每个任务
 	BlueLedTaskHandle = osThreadNew(BlueLedTask, nullptr, &BlueLedTaskAttribute);
 	RedLedTaskHandle = osThreadNew(RedLedTask, nullptr, &RedLedTaskAttribute);
+	printf()
 }
 
 #ifdef __cplusplus
