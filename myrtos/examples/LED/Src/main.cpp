@@ -24,7 +24,6 @@ void RTOS_Threads_Init(void) {
 	// 分别启动每个任务
 	BlueLedTaskHandle = osThreadNew(BlueLedTask, nullptr, &BlueLedTaskAttribute);
 	RedLedTaskHandle = osThreadNew(RedLedTask, nullptr, &RedLedTaskAttribute);
-	printf()
 }
 
 #ifdef __cplusplus

@@ -14,25 +14,25 @@ function(add_arm_executable name)
 	set(BIN_FILE ${CMAKE_CURRENT_BINARY_DIR}/${name}.bin)
 	set(MAP_FILE ${CMAKE_CURRENT_BINARY_DIR}/${name}.map)
 
-	add_executable(${name}.elf ${ARG_SOURCES})
+	add_executable(${name} ${ARG_SOURCES})
 
-	target_link_libraries(${name}.elf
+	target_link_libraries(${name}
 			PRIVATE ${ARG_DEPENDS} ${ARG_TARGET} ${ARG_TARGET}_platform ${ARG_TARGET}_drivers)
 
-	target_include_directories(${name}.elf PRIVATE ${ARG_INCLUDES})
-	target_compile_definitions(${name}.elf PRIVATE ${ARG_DEFINES})
-	target_link_options(${name}.elf PRIVATE -Wl,--print-memory-usage,-Map=${MAP_FILE})
+	target_include_directories(${name} PRIVATE ${ARG_INCLUDES})
+	target_compile_definitions(${name} PRIVATE ${ARG_DEFINES})
+	target_link_options(${name} PRIVATE -Wl,--print-memory-usage,-Map=${MAP_FILE})
 
 	find_program(ARM_SIZE arm-none-eabi-size REQUIRED)
 	find_program(ARM_OBJCOPY arm-none-eabi-objcopy REQUIRED)
-	add_custom_command(TARGET ${name}.elf POST_BUILD
-			COMMAND ${ARM_SIZE} ${name}.elf
-			COMMAND ${ARM_OBJCOPY} -Oihex $<TARGET_FILE:${name}.elf> ${HEX_FILE}
-			COMMAND ${ARM_OBJCOPY} -Obinary $<TARGET_FILE:${name}.elf> ${BIN_FILE}
+	add_custom_command(TARGET ${name} POST_BUILD
+			COMMAND ${ARM_SIZE} $<TARGET_FILE:${name}>
+			COMMAND ${ARM_OBJCOPY} -Oihex $<TARGET_FILE:${name}> ${HEX_FILE}
+			COMMAND ${ARM_OBJCOPY} -Obinary $<TARGET_FILE:${name}> ${BIN_FILE}
 			COMMENT "Building ${HEX_FILE}\nBuilding ${BIN_FILE}")
 
 	# DEBUG
 	message(STATUS "ARG_SOURCES = ${ARG_SOURCES}")
 	message(STATUS "ARG_TARGET = ${ARG_TARGET}")
 	message(STATUS "ARG_TARGET = ${ARG_TARGET}_drivers")
-endfunction(add_arm_executable)
+endfunction()

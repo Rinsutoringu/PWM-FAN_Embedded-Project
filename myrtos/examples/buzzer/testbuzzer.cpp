@@ -7,7 +7,7 @@
 #include "main.h"
 #include "cmsis_os.h"
 #include "stm32f1xx_it.h"
-#include "buzzer.h"
+#include "testbuzzer.h"
 #include "tim.h"
 
 
